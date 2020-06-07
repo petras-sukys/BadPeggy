@@ -11,8 +11,9 @@ Implemented in Java 8 and SWT. Runs on Windows, MacOS and Linux.
 BadPeggy development is done in Eclipse (Photon+). Choose the right SWT project
 for your platform, and import it into your workspace. It will show up as
 *org.clipse.swt*. On Linux for instance it would be
-*swt/4.8/gtk-linux_x86_64/*. You also need the library CLBaseLib, which you can
-clone from GitHub and import its Eclipse project.
+*swt/4.8/gtk-linux_x86_64/*. You also need the library
+[CLBaseLib](https://github.com/mhahn-c/clbaselib), for which you can simply import
+its Eclipse project.
 
 You can then run Bad Peggy by debugging the class *coderslagoon.badpeggy.GUI*.
 
@@ -23,7 +24,7 @@ included, due to the huge size of it (3+GB).
 
 ## Shipping
 
-For shipping clone the [jre-reduce](https://github.com/coderslagoon/jre-reduce)
+For shipping clone the [jre-reduce](https://github.com/mhahn-c/jre-reduce)
 repo from GitHub, in parallel to the other projects. Download the appropriate JRE
 runtime files, as mentioned in the jre-reduce documentation. Then run *build.sh*
 and *build_macos.sh* to create the installer, passing them a version string.
