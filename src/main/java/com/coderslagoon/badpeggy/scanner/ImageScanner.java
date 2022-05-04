@@ -1,4 +1,4 @@
-package coderslagoon.badpeggy.scanner;
+package com.coderslagoon.badpeggy.scanner;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -16,9 +16,9 @@ import javax.imageio.ImageReader;
 import javax.imageio.event.IIOReadProgressListener;
 import javax.imageio.event.IIOReadWarningListener;
 
-import coderslagoon.baselib.util.BinUtils;
-import coderslagoon.baselib.util.Log;
-import coderslagoon.baselib.util.StopException;
+import com.coderslagoon.baselib.util.BinUtils;
+import com.coderslagoon.baselib.util.Log;
+import com.coderslagoon.baselib.util.StopException;
 
 public class ImageScanner implements IIOReadWarningListener, IIOReadProgressListener {
     public void imageComplete    (ImageReader a) { }
@@ -108,7 +108,7 @@ public class ImageScanner implements IIOReadWarningListener, IIOReadProgressList
     public interface Callback {
         boolean onProgress(double percent);
     }
-    
+
     public interface InputStreamSource {
         InputStream get() throws IOException;
     }
@@ -128,22 +128,22 @@ public class ImageScanner implements IIOReadWarningListener, IIOReadProgressList
                 ireader.removeAllIIOReadProgressListeners();
                 ireader.removeAllIIOReadUpdateListeners();
                 ireader.removeAllIIOReadWarningListeners();
-    
+
                 ireader.addIIOReadWarningListener(this);
                 ireader.addIIOReadProgressListener(this);
-    
+
                 ins = iss.get();
                 ireader.setInput(ImageIO.createImageInputStream(ins));
-    
+
                 this.imageCount = ireader.getNumImages(true);
-    
+
                 for (this.imageIndex = 0; this.imageIndex < this.imageCount;) {
                     BufferedImage bimg = ireader.read(this.imageIndex++);
-    
+
                     _log.trace("image decoded (" + bimg.getWidth () + "x" +
                                                    bimg.getHeight() + ")");
                 }
-    
+
                 this.lastResult.type = lastResultMsgsSize == this.lastResult.msgs.size() ?
                         Result.Type.OK :
                         Result.Type.WARNING;

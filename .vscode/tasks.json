@@ -1,0 +1,29 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "java (buildArtifact)",
+			"mainClass": "com.coderslagoon.badpeggy.GUI",
+			"targetPath": "${workspaceFolder}/${workspaceFolderBasename}.jar",
+			"elements": [
+				"${compileOutput}",
+				"${dependencies}"
+			],
+			"problemMatcher": [],
+			"label": "java: exportjar:BadPeggy",
+			"group": {
+				"kind": "build",
+				"isDefault": false
+			}
+		},
+		{
+			"label": "mvn package",
+			"type": "shell",
+			"command": "mvn package -Dmaven.test.skip=true",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		}
+	]
+}

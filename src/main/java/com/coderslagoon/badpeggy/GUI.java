@@ -1,4 +1,4 @@
-package coderslagoon.badpeggy;
+package com.coderslagoon.badpeggy;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -69,32 +69,32 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
-import coderslagoon.badpeggy.scanner.ImageFormat;
-import coderslagoon.badpeggy.scanner.ImageScanner;
-import coderslagoon.baselib.io.FileNode;
-import coderslagoon.baselib.io.FileRegistrar;
-import coderslagoon.baselib.io.FileSystem;
-import coderslagoon.baselib.io.LocalFileSystem;
-import coderslagoon.baselib.io.FileRegistrar.Callback.Merge;
-import coderslagoon.baselib.io.FileRegistrar.InMemory.DefCmp;
-import coderslagoon.baselib.swt.dialogs.About;
-import coderslagoon.baselib.swt.dialogs.LangDialog;
-import coderslagoon.baselib.swt.dialogs.MessageBox2;
-import coderslagoon.baselib.swt.util.ImageViewer;
-import coderslagoon.baselib.swt.util.SWTUtil;
-import coderslagoon.baselib.swt.util.Safe;
-import coderslagoon.baselib.swt.util.ShellProps;
-import coderslagoon.baselib.swt.util.Splitter;
-import coderslagoon.baselib.util.BaseLibException;
-import coderslagoon.baselib.util.Log;
-import coderslagoon.baselib.util.MiscUtils;
-import coderslagoon.baselib.util.Prp;
-import coderslagoon.baselib.util.VarRef;
+import com.coderslagoon.badpeggy.scanner.ImageFormat;
+import com.coderslagoon.badpeggy.scanner.ImageScanner;
+import com.coderslagoon.baselib.io.FileNode;
+import com.coderslagoon.baselib.io.FileRegistrar;
+import com.coderslagoon.baselib.io.FileSystem;
+import com.coderslagoon.baselib.io.LocalFileSystem;
+import com.coderslagoon.baselib.io.FileRegistrar.Callback.Merge;
+import com.coderslagoon.baselib.io.FileRegistrar.InMemory.DefCmp;
+import com.coderslagoon.baselib.swt.dialogs.About;
+import com.coderslagoon.baselib.swt.dialogs.LangDialog;
+import com.coderslagoon.baselib.swt.dialogs.MessageBox2;
+import com.coderslagoon.baselib.swt.util.ImageViewer;
+import com.coderslagoon.baselib.swt.util.SWTUtil;
+import com.coderslagoon.baselib.swt.util.Safe;
+import com.coderslagoon.baselib.swt.util.ShellProps;
+import com.coderslagoon.baselib.swt.util.Splitter;
+import com.coderslagoon.baselib.util.BaseLibException;
+import com.coderslagoon.baselib.util.Log;
+import com.coderslagoon.baselib.util.MiscUtils;
+import com.coderslagoon.baselib.util.Prp;
+import com.coderslagoon.baselib.util.VarRef;
 
 public class GUI implements Runnable, NLS.Reg.Listener {
     final static String PROPERTIES = "badpeggy";
 
-    final static String VERSION = "2.3";
+    final static String VERSION = "2.4.0";
 
     final static int DLG_GAP = 10;
 
@@ -162,9 +162,10 @@ public class GUI implements Runnable, NLS.Reg.Listener {
         _propertiesFile = MiscUtils.determinePropFile(GUI.class, PROPERTIES, true);
     }
 
-    final static String PRODUCT_NAME = "Bad Peggy";
-    public final static String PRODUCT_SITE = "https://coderslagoon.com/product";
-    
+    final static String PRODUCT_TITLE = "Bad Peggy";
+    final static String PRODUCT_NAME = PRODUCT_TITLE.toLowerCase().replace(" ", "");
+    public final static String PRODUCT_SITE = "https://coderslagoon.com";
+
     final static int EXITCODE_UNRECERR = 1;
 
     private void initLang() throws BaseLibException {
@@ -172,7 +173,7 @@ public class GUI implements Runnable, NLS.Reg.Listener {
         Prp.loadFromFile(Prp.global(), _propertiesFile);
         String lang = GUIProps.SET_LANG.get();
         if (null == lang) {
-            LangDialog ldlg = new LangDialog(this.shell, Prp.global(), LANGS, PRODUCT_NAME, true);
+            LangDialog ldlg = new LangDialog(this.shell, Prp.global(), LANGS, PRODUCT_TITLE, true);
             ldlg.open();
             ldlg.waitForClose();
             GUIProps.SET_LANG.set(Prp.global(), lang = ldlg.id());
@@ -182,7 +183,7 @@ public class GUI implements Runnable, NLS.Reg.Listener {
 
     public GUI() throws BaseLibException {
 
-        Display.setAppName(PRODUCT_NAME);
+        Display.setAppName(PRODUCT_TITLE);
         Display.setAppVersion(VERSION);
 
         this.display = new Display();
@@ -194,7 +195,7 @@ public class GUI implements Runnable, NLS.Reg.Listener {
         });
 
         this.shell = new Shell(this.display, SWT.BORDER | SWT.SHELL_TRIM | SWT.TITLE);
-        this.shell.setText(PRODUCT_NAME);
+        this.shell.setText(PRODUCT_TITLE);
 
         setProgramIcon();
         initLang();
@@ -452,8 +453,8 @@ public class GUI implements Runnable, NLS.Reg.Listener {
 
     void setProgramIcon() {
         this.shell.setImages(new Image[] {
-            new Image(this.display, getClass().getResourceAsStream("resources/icon48x48.png")),
-            new Image(this.display, getClass().getResourceAsStream("resources/icon256x256.png"))
+            new Image(this.display, getClass().getResourceAsStream("icon48x48.png")),
+            new Image(this.display, getClass().getResourceAsStream("icon256x256.png"))
         });
     }
 
@@ -487,7 +488,7 @@ public class GUI implements Runnable, NLS.Reg.Listener {
                     NLS.GUI_ABOUT_INTRO.s(),
                     String.format(NLS.GUI_ABOUT_COPYRIGHT_1.s(),
                         MiscUtils.copyrightYear(2005, Calendar.getInstance())),
-                    GUI.class.getResourceAsStream("resources/icon48x48.png"),
+                    GUI.class.getResourceAsStream("icon48x48.png"),
                     GUI.this.display.getSystemColor(SWT.COLOR_DARK_GRAY));
                 dlg.open();
         }
@@ -496,10 +497,10 @@ public class GUI implements Runnable, NLS.Reg.Listener {
     Listener onDocumentation = new Safe.Listener() {
         protected void unsafeHandleEvent(Event evt) {
             String name = String.format("badpeggy_%s.html",
-                coderslagoon.baselib.util.NLS.Reg.instance().id().toUpperCase());
+                com.coderslagoon.baselib.util.NLS.Reg.instance().id().toUpperCase());
             File fl = SWTUtil.openFileFromResource(
                 getClass(),
-                "resources/" + name,
+                name,
                 name,
                 GUI.this.manualFiles.containsKey(name));
             if (null != fl) {
@@ -511,11 +512,11 @@ public class GUI implements Runnable, NLS.Reg.Listener {
     Listener onWebsite = new Safe.Listener() {
         protected void unsafeHandleEvent(Event evt) {
             try {
-                String pname = PRODUCT_NAME.toLowerCase().replace(" ", "");
-                String url = PRODUCT_SITE + 
-                    "?version=" + URLEncoder.encode(VERSION, "UTF-8") +
-                    "&name=" + pname +
-                    "&lang=" + coderslagoon.baselib.util.NLS.Reg.instance().id().toLowerCase();
+                String url = PRODUCT_SITE +
+                    "/?version=" + URLEncoder.encode(VERSION, "UTF-8") +
+                    "&name=" + PRODUCT_NAME +
+                    "&lang=" + com.coderslagoon.baselib.util.NLS.Reg.instance().id().toLowerCase() +
+                    "#" + PRODUCT_NAME;
                 if (Program.launch(url)) {
                     return;
                 }
@@ -525,7 +526,7 @@ public class GUI implements Runnable, NLS.Reg.Listener {
             MessageBox2.standard(GUI.this.shell,
                     SWT.ICON_WARNING | SWT.OK,
                     NLS.GUI_MSGBOX_WEBSITE_1.fmt(PRODUCT_SITE),
-                    PRODUCT_NAME);
+                    PRODUCT_TITLE);
         }
     };
 
@@ -601,13 +602,12 @@ public class GUI implements Runnable, NLS.Reg.Listener {
     final static String DEFAULT_LANG_ID = "de";
     final static String[][] LANGS = new String[][] {
         { DEFAULT_LANG_ID, "Deutsch" },
-        { "en"           , "English" },
-        { "cz"           , "Český"   }
+        { "en"           , "English" }
     };
 
     Listener onLanguage = new Safe.Listener() {
         protected void unsafeHandleEvent(Event evt) {
-            LangDialog ldlg = new LangDialog(GUI.this.shell, Prp.global(), LANGS, PRODUCT_NAME, false);
+            LangDialog ldlg = new LangDialog(GUI.this.shell, Prp.global(), LANGS, PRODUCT_TITLE, false);
             ldlg.open();
             ldlg.waitForClose();
             String newLangID = ldlg.id();
@@ -926,7 +926,7 @@ public class GUI implements Runnable, NLS.Reg.Listener {
 
     Listener onSortByFile = new Safe.Listener() {
         protected void unsafeHandleEvent(Event evt) {
-            Collections.sort(GUI.this.results, (o1, o2) -> 
+            Collections.sort(GUI.this.results, (o1, o2) ->
                 o1.tag.toString().compareToIgnoreCase(o2.tag.toString()));
             GUI.this.reset();
         }
@@ -1080,7 +1080,7 @@ public class GUI implements Runnable, NLS.Reg.Listener {
                 this.shell.close();
                 return;
             }
-            this.shell.setText(PRODUCT_NAME);
+            this.shell.setText(PRODUCT_TITLE);
             this.lastPercentage = 0.0;
             enableControls(true);
         }
@@ -1090,7 +1090,7 @@ public class GUI implements Runnable, NLS.Reg.Listener {
         this.esc.set(false);
         this.fatalErr = false;
         this.info.setText(NLS.GUI_MSG_PRESSESC.s());
-        this.shell.setText(String.format("%s - %s", PRODUCT_NAME,
+        this.shell.setText(String.format("%s - %s", PRODUCT_TITLE,
                 NLS.GUI_CAPTION_SEARCHING.s()));
         FileRegistrar freg = new FileRegistrar.InMemory(new DefCmp(true));
         final String[] exts = MiscUtils.csvLoad(GUIProps.OPTS_FILEEXTS.get(), true);
@@ -1191,7 +1191,7 @@ public class GUI implements Runnable, NLS.Reg.Listener {
                                GUI.this.numOfFiles;
                 if (GUI.this.lastPercentage < prct) {
                     GUI.this.shell.setText(String.format(
-                            "%s - %.1f%%", PRODUCT_NAME,
+                            "%s - %.1f%%", PRODUCT_TITLE,
                             GUI.this.lastPercentage = prct));
                 }
             }

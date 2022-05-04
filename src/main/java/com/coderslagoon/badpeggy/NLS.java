@@ -1,7 +1,7 @@
-package coderslagoon.badpeggy;
+package com.coderslagoon.badpeggy;
 
-public class NLS extends coderslagoon.baselib.util.NLS {
-    static { coderslagoon.baselib.util.NLS.Reg.instance().register(NLS.class); }
+public class NLS extends com.coderslagoon.baselib.util.NLS {
+    static { com.coderslagoon.baselib.util.NLS.Reg.instance().register(NLS.class); }
 
     public static Str GUI_MN_FILE;
     public static Str GUI_MN_FILE_SCAN;

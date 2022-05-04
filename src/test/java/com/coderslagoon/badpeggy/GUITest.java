@@ -1,9 +1,7 @@
-package coderslagoon.badpeggy;
+package com.coderslagoon.badpeggy;
 
 import org.junit.Assert;
 import org.junit.Test;
-
-import coderslagoon.badpeggy.GUI;
 
 public class GUITest {
 

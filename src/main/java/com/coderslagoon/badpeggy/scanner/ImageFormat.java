@@ -1,4 +1,4 @@
-package coderslagoon.badpeggy.scanner;
+package com.coderslagoon.badpeggy.scanner;
 
 import java.util.HashSet;
 import java.util.Set;

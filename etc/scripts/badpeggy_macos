@@ -1,0 +1,5 @@
+#!/bin/bash
+BADPEGGYDIR=`dirname "$0"`
+JAVA_HOME="$BADPEGGYDIR/jre"
+export JAVA_HOME
+exec -a badpeggy "$JAVA_HOME/bin/java" -XstartOnFirstThread -cp "$BADPEGGYDIR/badpeggy.jar" com.coderslagoon.badpeggy.GUI

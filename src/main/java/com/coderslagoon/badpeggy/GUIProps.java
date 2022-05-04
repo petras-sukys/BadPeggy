@@ -1,7 +1,7 @@
-package coderslagoon.badpeggy;
+package com.coderslagoon.badpeggy;
 
-import coderslagoon.badpeggy.scanner.ImageFormat;
-import coderslagoon.baselib.util.Prp;
+import com.coderslagoon.badpeggy.scanner.ImageFormat;
+import com.coderslagoon.baselib.util.Prp;
 
 public class GUIProps {
     public final static String GUI_PFX              = "gui.";

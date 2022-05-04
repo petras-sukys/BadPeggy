@@ -1,8 +1,12 @@
 .DS_Store
-bin
-tmp
 .settings
 *.class
 *.jar
-build
+bin
 dist.sh
+jre
+ship
+target
+tmp
+imagescannertest_nodetects.txt
+imagescannertest_resultcodes.txt
