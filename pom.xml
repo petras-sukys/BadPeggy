@@ -25,7 +25,7 @@
     <dependency>
       <groupId>org.eclipse.platform</groupId>
       <artifactId>org.eclipse.swt.${swt.os}</artifactId>
-      <version>3.119.0</version>
+      <version>3.120.0</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
