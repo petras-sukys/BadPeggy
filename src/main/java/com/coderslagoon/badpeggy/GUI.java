@@ -470,10 +470,7 @@ public class GUI implements Runnable, NLS.Reg.Listener {
             for (Handler h : rootLog.getHandlers()) {
                 rootLog.removeHandler(h);
             }
-
-            Log.addPrinter(System.out);
             Log.level(Log.Level.DEBUG);
-
             GUI gui = new GUI();
             gui.run();
         }
