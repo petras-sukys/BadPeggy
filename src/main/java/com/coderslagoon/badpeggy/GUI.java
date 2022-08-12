@@ -496,6 +496,7 @@ public class GUI implements Runnable, NLS.Reg.Listener {
             FileDialog fd = new FileDialog(GUI.this.shell, SWT.SAVE);
             fd.setFilterNames     (new String[] { NLS.GUI_DLG_FILTER_TEXT_NAMES.s() });
             fd.setFilterExtensions(new String[] { NLS.GUI_DLG_FILTER_TEXT_EXTS.s() });
+            fd.setOverwrite(true);
             fd.setText(NLS.GUI_DLG_LOGGING.s());
             fd.setFilterPath(lastLogFile.getParent());
             fd.setFileName(lastLogFile.getName());
@@ -504,7 +505,7 @@ public class GUI implements Runnable, NLS.Reg.Listener {
                 return;
             }
             try {
-                FileOutputStream fos = new FileOutputStream(path, true);
+                FileOutputStream fos = new FileOutputStream(path, false);
                 PrintStream ps = new PrintStream(fos, true);
                 Log.addPrinter(ps);
                 GUIProps.SET_LASTLOGGING.set(Prp.global(), path);
