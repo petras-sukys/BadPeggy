@@ -185,7 +185,9 @@ public class ImageScanner implements IIOReadWarningListener, IIOReadProgressList
             }
             catch (Throwable e) {
                 System.gc();
-                Log.exception(Log.Level.ERROR, "unexpected error", e);
+                if (!(e instanceof StopException)) {
+                    Log.exception(Log.Level.ERROR, "unexpected error", e);
+                }
                 String msg = e.getMessage();
                 if (null == msg) {
                     this.lastResult.msgs.add(e.toString());
