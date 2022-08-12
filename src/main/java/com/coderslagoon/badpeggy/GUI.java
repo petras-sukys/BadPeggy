@@ -464,6 +464,10 @@ public class GUI implements Runnable, NLS.Reg.Listener {
             for (Handler h : rootLog.getHandlers()) {
                 rootLog.removeHandler(h);
             }
+
+            Log.addPrinter(System.out);
+            Log.level(Log.Level.DEBUG);
+
             GUI gui = new GUI();
             gui.run();
         }
@@ -1266,7 +1270,8 @@ public class GUI implements Runnable, NLS.Reg.Listener {
             Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
             InputStream ins = null;
             try {
-                GUI.this.updateProgress(this.fnode.path(true));
+                String filePath = this.fnode.path(true);
+                GUI.this.updateProgress(filePath);
                 ImageScanner.InputStreamSource iss = new ImageScanner.InputStreamSource() {
                     public InputStream get() throws IOException{
                         InputStream ins = ScanRun.this.fnode.fileSystem().openRead(ScanRun.this.fnode);
@@ -1274,6 +1279,7 @@ public class GUI implements Runnable, NLS.Reg.Listener {
                     }
                 };
                 ImageScanner scanner = new ImageScanner();
+                scanner.log.info(filePath);
                 final VarRef<Boolean> aborted = new VarRef<>(false);
                 if (null == scanner.scan(iss,
                     ImageFormat.fromFileName(this.fnode.name()),

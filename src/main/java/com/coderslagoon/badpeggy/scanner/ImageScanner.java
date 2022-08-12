@@ -49,7 +49,9 @@ public class ImageScanner implements IIOReadWarningListener, IIOReadProgressList
     Result   lastResult;
     Callback callback;
 
-    static Log _log = new Log("ImageScanner");
+    final static String LOG_CTX = "imgscan";
+    static int nextLogId = 0;
+    public Log log = new Log(LOG_CTX + "-" + nextLogId++);
 
     static {
         ImageIO.setUseCache(false);
@@ -114,6 +116,7 @@ public class ImageScanner implements IIOReadWarningListener, IIOReadProgressList
     }
 
     public Boolean scan(InputStreamSource iss, ImageFormat ifmt, Callback callback) {
+
         this.lastResult = new Result();
         this.callback = callback;
         List<ImageReader> ireaders = newReaders(ifmt);
@@ -140,8 +143,8 @@ public class ImageScanner implements IIOReadWarningListener, IIOReadProgressList
                 for (this.imageIndex = 0; this.imageIndex < this.imageCount;) {
                     BufferedImage bimg = ireader.read(this.imageIndex++);
 
-                    _log.trace("image decoded (" + bimg.getWidth () + "x" +
-                                                   bimg.getHeight() + ")");
+                    this.log.debug("image decoded (" + bimg.getWidth () + "x" +
+                                                  bimg.getHeight() + ")");
                 }
 
                 this.lastResult.type = lastResultMsgsSize == this.lastResult.msgs.size() ?
@@ -170,13 +173,13 @@ public class ImageScanner implements IIOReadWarningListener, IIOReadProgressList
                 }
             }
             catch (IIOException iioe) {
-                _log.infof("decoding failed (%s)", iioe.getMessage());
+                this.log.infof("decoding failed (%s)", iioe.getMessage());
                 this.lastResult.msgs.add(iioe.getMessage());
                 this.lastResult.type = Result.Type.ERROR;
             }
             catch (EOFException eofe) {
                 final String MSG = "premature file end";
-                _log.infof(MSG);
+                this.log.infof(MSG);
                 this.lastResult.msgs.add(MSG);
                 this.lastResult.type = Result.Type.ERROR;
             }
@@ -207,22 +210,22 @@ public class ImageScanner implements IIOReadWarningListener, IIOReadProgressList
 
     public static boolean selfTest() {
         try {
-            ImageScanner js = new ImageScanner();
-            Boolean res = js.scan(new InputStreamSource() {
+            ImageScanner imgScan = new ImageScanner();
+            Boolean res = imgScan.scan(new InputStreamSource() {
                 public InputStream get() {
                     return new ByteArrayInputStream(SELFTEST_DATA);
                 }
             }, ImageFormat.JPEG, null);
             if (null == res) {
-                _log.fatal("selftest failed: image scanner not functioning");
+                imgScan.log.fatal("selftest failed: image scanner not functioning");
                 return false;
             }
             if (res) {
-                _log.fatal("selftest failed: scan returned true");
+                imgScan.log.fatal("selftest failed: scan returned true");
                 return false;
             }
-            if (js.lastResult.type() != Result.Type.WARNING) {
-                _log.fatalf("selftest failed (result is '%s')", js.lastResult.type());
+            if (imgScan.lastResult.type() != Result.Type.WARNING) {
+                imgScan.log.fatalf("selftest failed (result is '%s')", imgScan.lastResult.type());
                 return false;
             }
         }
