@@ -23,7 +23,8 @@ public class GUIProps {
     public final static Prp.Str  SET_LASTFOLDER      = new Prp.Str (GUI_SET_PFX  + "lastfolder"    , ".");
     public final static Prp.Str  SET_LASTMOVEDEST    = new Prp.Str (GUI_SET_PFX  + "lastmovedest"  , ".");
     public final static Prp.Str  SET_LASTEXPORTFILE  = new Prp.Str (GUI_SET_PFX  + "lastexportfile", "badpeggy_list.txt");
-    public final static Prp.Str  SET_LANG            = new Prp.Str (GUI_SET_PFX  + "lang", null);
+    public final static Prp.Str  SET_LASTLOGGING     = new Prp.Str (GUI_SET_PFX  + "lastlogging"   , "badpeggy_logging.txt");
+    public final static Prp.Str  SET_LANG            = new Prp.Str (GUI_SET_PFX  + "lang"          , null);
 
     private static String makeFileExtensionList() {
         String result = "";

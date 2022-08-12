@@ -16,6 +16,7 @@ public class NLS extends com.coderslagoon.baselib.util.NLS {
     public static Str GUI_MN_HELP;
     public static Str GUI_MN_HELP_DOCUMENTATION;
     public static Str GUI_MN_HELP_WEBSITE;
+    public static Str GUI_MN_HELP_LOGGING;
     public static Str GUI_MN_HELP_ABOUT;
     public static Str GUI_PMN_DELETE;
     public static Str GUI_PMN_MOVE;
@@ -54,9 +55,10 @@ public class NLS extends com.coderslagoon.baselib.util.NLS {
     public static Str GUI_DLG_MOVE_DEST_MSG_1;
     public static Str GUI_DLG_MOVE_DEST_TEXT;
     public static Str GUI_DLG_EXPLST_TEXT;
-    public static Str GUI_DLG_EXPLST_FILTERNAMES;
-    public static Str GUI_DLG_EXPLST_FILTEREXTS;
+    public static Str GUI_DLG_FILTER_TEXT_NAMES;
+    public static Str GUI_DLG_FILTER_TEXT_EXTS;
     public static Str GUI_DLG_EXPLST_ERROR_1;
+    public static Str GUI_DLG_LOGGING;
     public static Str GUI_SCAN_TEXT;
     public static Str GUI_SCAN_MESSAGE;
     public static Str GUI_STARTUP_ERROR;

@@ -139,6 +139,7 @@ public class GUI implements Runnable, NLS.Reg.Listener {
     MenuItem    mniHelp;
     MenuItem    mniDocumentation;
     MenuItem    mniWebsite;
+    MenuItem    mniLogging;
     MenuItem    mniAbout;
     MenuItem    mniDelete;
     MenuItem    mniMove;
@@ -259,6 +260,9 @@ public class GUI implements Runnable, NLS.Reg.Listener {
         this.mniWebsite = new MenuItem(mn1, SWT.NONE);
         this.mniWebsite.addListener(SWT.Selection, this.onWebsite);
         new MenuItem(mn1, SWT.SEPARATOR);
+        this.mniLogging = new MenuItem(mn1, SWT.NONE);
+        this.mniLogging.addListener(SWT.Selection, this.onLogging);
+        new MenuItem(mn1, SWT.SEPARATOR);
         this.mniAbout = new MenuItem(mn1, SWT.NONE);
         this.mniAbout.addListener(SWT.Selection, this.onAbout);
 
@@ -373,6 +377,7 @@ public class GUI implements Runnable, NLS.Reg.Listener {
         for (File fl : GUI.this.manualFiles.values()) {
             fl.delete();
         }
+        Log.reset();
     }
 
     @Override
@@ -389,6 +394,7 @@ public class GUI implements Runnable, NLS.Reg.Listener {
         this.mniHelp          .setText(NLS.GUI_MN_HELP               .s());
         this.mniDocumentation .setText(NLS.GUI_MN_HELP_DOCUMENTATION .s());
         this.mniWebsite       .setText(NLS.GUI_MN_HELP_WEBSITE       .s());
+        this.mniLogging       .setText(NLS.GUI_MN_HELP_LOGGING       .s());
         this.mniAbout         .setText(NLS.GUI_MN_HELP_ABOUT         .s());
         this.mniDelete        .setText(NLS.GUI_PMN_DELETE            .s());
         this.mniMove          .setText(NLS.GUI_PMN_MOVE              .s());
@@ -437,7 +443,7 @@ public class GUI implements Runnable, NLS.Reg.Listener {
                 NLS.GUI_DLG_GENERIC_WARNING.s());
         }
         finally {
-            if (null != faos) try { faos.close(); } catch (IOException ignored) { }
+            if (null != faos) try { faos.close(); } catch (Exception ignored) { }
         }
     }
 
@@ -481,6 +487,34 @@ public class GUI implements Runnable, NLS.Reg.Listener {
     Listener onExit = new Safe.Listener() {
         protected void unsafeHandleEvent(Event evt) {
             GUI.this.shell.close();
+        }
+    };
+
+    Listener onLogging = new Safe.Listener() {
+        protected void unsafeHandleEvent(Event evt) {
+            File lastLogFile = new File(GUIProps.SET_LASTLOGGING.get());
+            FileDialog fd = new FileDialog(GUI.this.shell, SWT.SAVE);
+            fd.setFilterNames     (new String[] { NLS.GUI_DLG_FILTER_TEXT_NAMES.s() });
+            fd.setFilterExtensions(new String[] { NLS.GUI_DLG_FILTER_TEXT_EXTS.s() });
+            fd.setText(NLS.GUI_DLG_LOGGING.s());
+            fd.setFilterPath(lastLogFile.getParent());
+            fd.setFileName(lastLogFile.getName());
+            String path = fd.open();
+            if (null == path) {
+                return;
+            }
+            try {
+                FileOutputStream fos = new FileOutputStream(path, true);
+                PrintStream ps = new PrintStream(fos, true);
+                Log.addPrinter(ps);
+                GUIProps.SET_LASTLOGGING.set(Prp.global(), path);
+                GUI.this.mniLogging.setEnabled(false);
+            } catch (Exception e) {
+                MessageBox2.standard(GUI.this.shell,
+                    SWT.ICON_ERROR | SWT.OK,
+                    e.getMessage(),
+                    PRODUCT_TITLE);
+            }
         }
     };
 
@@ -880,8 +914,8 @@ public class GUI implements Runnable, NLS.Reg.Listener {
         protected void unsafeHandleEvent(Event evt) {
             FileDialog fd = new FileDialog(GUI.this.shell, SWT.SAVE);
             File last = new File(GUIProps.SET_LASTEXPORTFILE.get()).getAbsoluteFile();
-            fd.setFilterNames     (new String[] { NLS.GUI_DLG_EXPLST_FILTERNAMES.s() });
-            fd.setFilterExtensions(new String[] { NLS.GUI_DLG_EXPLST_FILTEREXTS.s() });
+            fd.setFilterNames     (new String[] { NLS.GUI_DLG_FILTER_TEXT_NAMES.s() });
+            fd.setFilterExtensions(new String[] { NLS.GUI_DLG_FILTER_TEXT_EXTS.s() });
             fd.setFilterPath      (last.getParentFile().getAbsolutePath());
             fd.setFileName        (last.getName());
             fd.setText            (NLS.GUI_DLG_EXPLST_TEXT.s());
@@ -1293,7 +1327,7 @@ public class GUI implements Runnable, NLS.Reg.Listener {
             }
             finally {
                 if (null != ins) {
-                    try { ins.close(); } catch (IOException ignored) { }
+                    try { ins.close(); } catch (Exception ignored) { }
                 }
             }
             GUI.this.display.syncExec(new Runnable() {
