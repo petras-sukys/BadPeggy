@@ -356,9 +356,7 @@ public class ImageScannerTest implements ImageScanner.Callback {
 
                     ImageWriteParam iwp = writer.getDefaultWriteParam();
                     if (ifmt.name.equals("jpeg")) {
-                        if (iwp instanceof JPEGImageWriteParam) {
-                            JPEGImageWriteParam jiwp = (JPEGImageWriteParam)iwp;
-
+                        if (iwp instanceof JPEGImageWriteParam jiwp) {
                             jiwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
                             jiwp.setCompressionQuality((float)quality);
                             jiwp.setOptimizeHuffmanTables(1 == opthuff);
