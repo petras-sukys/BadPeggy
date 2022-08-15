@@ -7,7 +7,7 @@ if [[ ! ("$#" -eq 1) ]]; then
     exit 1
 fi
 
-BADPEGGYJAR=$(ls -1 target/badpeggy.cocoa.macosx.x86_64-*-jar-with-dependencies.jar)
+BADPEGGYJAR=$(ls -1 target/badpeggy-cocoa.macosx.x86_64-*-jar-with-dependencies.jar)
 
 BUILD=BadPeggy-$1
 BUILDIR=tmp/$BUILD
@@ -47,9 +47,9 @@ rm -f $DMGFILE
 
 hdiutil create -volname "Bad Peggy" -srcfolder $DEPLOYDIR $DMGFILE
 
-BADPEGGYJAR=$(ls -1 target/badpeggy-*-cocoa.macosx.aarch64-jar-with-dependencies.jar)
+BADPEGGYJAR=$(ls -1 target/badpeggy-cocoa.macosx.aarch64-*-jar-with-dependencies.jar)
 rm -f "$CONTDIR/MacOS/badpeggy.jar"
-cp -a $BADPEGGYJAR "$CONTDIR/MacOS//badpeggy.jar"
+cp -a $BADPEGGYJAR "$CONTDIR/MacOS/badpeggy.jar"
 DMGFILE=ship/badpeggy-$1_macos-arm.dmg
 rm -f $DMGFILE
 
