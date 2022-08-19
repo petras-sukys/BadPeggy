@@ -350,9 +350,7 @@ public class GUI implements Runnable, NLS.Reg.Listener {
             public void shellDeactivated(ShellEvent e) { }
             public void shellDeiconified(ShellEvent e) { }
             public void shellIconified  (ShellEvent e) { }
-            public void shellClosed(ShellEvent e) {
-                GUI.this.storeProperties();
-            }
+            public void shellClosed     (ShellEvent e) { }
         });
 
         this.shell.addListener(SWT.Close, new Safe.Listener() {
@@ -425,6 +423,7 @@ public class GUI implements Runnable, NLS.Reg.Listener {
                 SWTUtil.msgboxError(err, this.shell);
             }
         }
+        GUI.this.storeProperties();
         this.shell.dispose();
         this.display.dispose();
         System.exit(0);
