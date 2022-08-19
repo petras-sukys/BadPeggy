@@ -11,9 +11,9 @@
         },
 		{
 			"type": "java",
-            "name": "Launch GUI - JAR - cocoa.macosx.x86_64",
+            "name": "Launch GUI - JAR - cocoa.macosx.aarch64",
             "classPaths": [
-                "${workspaceFolder}/target/badpeggy-cocoa.macosx.x86_64-2.4.0-jar-with-dependencies.jar"
+                "${workspaceFolder}/target/badpeggy-cocoa.macosx.aarch64-2.4.0-jar-with-dependencies.jar"
             ],
 			"request": "launch",
             "vmArgs": "-XstartOnFirstThread"

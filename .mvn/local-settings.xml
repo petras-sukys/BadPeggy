@@ -7,7 +7,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <swt.os>cocoa.macosx.x86_64</swt.os>
+                <swt.os>cocoa.macosx.aarch64</swt.os>
             </properties>
         </profile>
     </profiles>

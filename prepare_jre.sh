@@ -3,12 +3,12 @@
 set -e
 
 APP_VERSION=2.4.0
-APP_NATIVE=cocoa.macosx.x86_64
+APP_NATIVE=cocoa.macosx.aarch64
 # APP_NATIVE=win32.win32.x86_64
 APP_JAR=target/badpeggy-${APP_NATIVE}-${APP_VERSION}-jar-with-dependencies.jar
 
 JDK_DIR=jre/jdk
-JDK_NATIVE=mac_x64
+JDK_NATIVE=mac_arm
 # JDK_NATIVE=win_x64
 
 JDK_VERSION_MAJOR=17
