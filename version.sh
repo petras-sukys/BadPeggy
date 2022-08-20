@@ -20,5 +20,5 @@ FNAME=etc/Info.plist
 perl -i -0 -pe "s/(<key>CFBundleShortVersionString<\/key>\s*<string>).*(<\/string>)/\${1}$VERSION\${2}/g" $FNAME
 perl -i -0 -pe "s/(<key>CFBundleVersion<\/key>\s*<string>).*(<\/string>)/\${1}$VERSION\${2}/g" $FNAME
 
-FNAME=pom.xml
-perl -i -0 -pe "s/($PRODUCT\.\\$\{swt\.os\}<\/artifactId>\s*<version>).*(<\/version>)/\${1}$VERSION\${2}/g" $FNAME
+FNAME=prepare_jre.sh
+perl -i -0 -pe "s/(APP_VERSION=).*/\${1}$VERSION/g" $FNAME
