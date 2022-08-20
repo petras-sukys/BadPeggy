@@ -23,6 +23,11 @@
       <version>1.0.0</version>
     </dependency>
     <dependency>
+      <groupId>com.coderslagoon</groupId>
+      <artifactId>baselib-swt</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+    <dependency>
       <groupId>org.eclipse.platform</groupId>
       <artifactId>org.eclipse.swt.${swt.os}</artifactId>
       <version>3.120.0</version>
@@ -40,6 +45,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
+        <version>3.2.1</version>
         <executions>
           <execution>
             <id>attach-sources</id>
@@ -52,6 +58,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
+        <version>3.4.2</version>
         <executions>
           <execution>
             <phase>package</phase>
