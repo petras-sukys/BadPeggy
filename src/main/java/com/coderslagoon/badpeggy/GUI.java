@@ -227,7 +227,7 @@ public class GUI implements Runnable, NLS.Reg.Listener {
         this.mniScan.addListener(SWT.Selection, this.onScan);
         new MenuItem(mn1, SWT.SEPARATOR);
         this.mniExit = new MenuItem(mn1, SWT.NONE);
-        this.mniExit.setAccelerator(SWT.MOD1 | (MiscUtils.underOSX() ? 'B' : 'Q'));
+        this.mniExit.setAccelerator(SWT.MOD1 | (MiscUtils.underMacOS() ? 'B' : 'Q'));
         this.mniExit.addListener(SWT.Selection, this.onExit);
 
         this.mniOpts = new MenuItem(mn0, SWT.CASCADE);

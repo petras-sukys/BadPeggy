@@ -6,10 +6,16 @@
             "type": "java",
             "name": "Launch GUI",
             "request": "launch",
+            "mainClass": "com.coderslagoon.badpeggy.GUI"
+        },
+		{
+            "type": "java",
+            "name": "Launch GUI - MacOS",
+            "request": "launch",
             "mainClass": "com.coderslagoon.badpeggy.GUI",
             "vmArgs": "-XstartOnFirstThread"
         },
-		{
+        {
 			"type": "java",
             "name": "Launch GUI - JAR - cocoa.macosx.aarch64",
             "classPaths": [
