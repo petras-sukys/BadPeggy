@@ -50,6 +50,8 @@ hdiutil create -volname "Bad Peggy" -srcfolder $DEPLOYDIR $DMGFILE
 BADPEGGYJAR=$(ls -1 target/badpeggy-cocoa.macosx.aarch64-*-jar-with-dependencies.jar)
 rm -f "$CONTDIR/MacOS/badpeggy.jar"
 cp -a $BADPEGGYJAR "$CONTDIR/MacOS/badpeggy.jar"
+rm -rf "$CONTDIR_TMP/MacOS/jre"
+cp -a -R jre/jlink/mac_arm $CONTDIR_TMP/MacOS/jre
 DMGFILE=ship/badpeggy-$1_macos-arm.dmg
 rm -f $DMGFILE
 

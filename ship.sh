@@ -1,5 +1,4 @@
 #!/bin/bash
-
 set -e
 
 if [[ ! ("$#" -eq 1) ]]; then
@@ -49,7 +48,7 @@ rm -f ship/badpeggy$1_windows.zip
 rm -rf   $BUILDIR
 mkdir -p $BUILDIR
 
-cp -a $BADPEGGYJAR             $BUILDIR/badpeggy.jar
+cp $BADPEGGYJAR                $BUILDIR/badpeggy.jar
 cp LICENSE.txt                 $BUILDIR/LICENSE.txt
 cp etc/README.txt              $BUILDIR/
 cp etc/LIESMICH.txt            $BUILDIR/
@@ -57,7 +56,7 @@ cp etc/scripts/badpeggy*.cmd   $BUILDIR/
 cp etc/scripts/install.vbs     $BUILDIR/
 cp etc/images/badpeggy.ico     $BUILDIR/
 
-cp -a -R jre/jlink/win_x64 $BUILDIR/jre
+cp -R jre/jlink/win_x64 $BUILDIR/jre
 
 cd tmp
 zip -9 -q -r -X ../ship/badpeggy-$1_windows.zip $BUILD
