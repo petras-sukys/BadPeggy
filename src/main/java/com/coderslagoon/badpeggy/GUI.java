@@ -596,6 +596,7 @@ public class GUI implements Runnable, NLS.Reg.Listener {
             fd.bottom = new FormAttachment(100, 0);
             btn.setLayoutData(fd);
             btn.addSelectionListener (new SelectionAdapter () {
+                @Override
                 public void widgetSelected (SelectionEvent sevt) {
                     dlg.close();
                 }
@@ -617,6 +618,7 @@ public class GUI implements Runnable, NLS.Reg.Listener {
             fd.bottom = new FormAttachment(100, 0);
             btn2.setLayoutData(fd);
             btn2.addSelectionListener (new SelectionAdapter () {
+                @Override
                 public void widgetSelected (SelectionEvent e) {
                     GUIProps.OPTS_FILEEXTS.set(Prp.global(),
                             MiscUtils.csvSave(
@@ -677,16 +679,14 @@ public class GUI implements Runnable, NLS.Reg.Listener {
     };
 
     void scheduleStop(boolean close) {
-        if (this.scanning) {
-            if (SWT.YES == MessageBox2.standard(
-                GUI.this.shell,
-                SWT.ICON_QUESTION | SWT.YES | SWT.NO,
-                NLS.GUI_DLG_ABORT_MSG.s(),
-                NLS.GUI_DLG_GENERIC_CONFIRM.s())) {
-                GUI.this.esc.set(true);
-                if (close) {
-                    GUI.this.close.set(true);
-                }
+        if (this.scanning && SWT.YES == MessageBox2.standard(
+            GUI.this.shell,
+            SWT.ICON_QUESTION | SWT.YES | SWT.NO,
+            NLS.GUI_DLG_ABORT_MSG.s(),
+            NLS.GUI_DLG_GENERIC_CONFIRM.s())) {
+            GUI.this.esc.set(true);
+            if (close) {
+                GUI.this.close.set(true);
             }
         }
     }
@@ -761,6 +761,7 @@ public class GUI implements Runnable, NLS.Reg.Listener {
 
 
     MenuAdapter onPopupMenu = new MenuAdapter() {
+        @Override
         public void menuShown(MenuEvent me) {
             boolean enable = 0 < GUI.this.badLst.getSelectionCount();
             for (int i : new int[] { 0, 1, 6 }) {
@@ -778,7 +779,6 @@ public class GUI implements Runnable, NLS.Reg.Listener {
             if ((evt.stateMask & SWT.CONTROL) == SWT.CONTROL &&
                  evt.keyCode == 'a') {
                 GUI.this.badLst.selectAll();
-                return;
             }
             else if (evt.keyCode == SWT.DEL) {
                 int c = GUI.this.badLst.getSelectionCount();
@@ -799,7 +799,6 @@ public class GUI implements Runnable, NLS.Reg.Listener {
                     reset();
                 }
             }
-            return;
         }
     };
 
@@ -932,7 +931,6 @@ public class GUI implements Runnable, NLS.Reg.Listener {
                 int[] idxs = GUI.this.badLst.getSelectionIndices();
                 for (int idx : idxs) {
                     fname = GUI.this.results.get(idx).tag.toString();
-                    System.out.println(fname);
                     ps.println(fname);
                 }
             }
@@ -979,6 +977,7 @@ public class GUI implements Runnable, NLS.Reg.Listener {
     };
 
     DropTargetAdapter onDrop = new DropTargetAdapter() {
+        @Override
         public void drop(DropTargetEvent evt) {
             FileTransfer ft = FileTransfer.getInstance();
             if (!ft.isSupportedType(evt.currentDataType)) {
@@ -987,17 +986,14 @@ public class GUI implements Runnable, NLS.Reg.Listener {
             // TODO: kind of a hack, there must be a better way...
             GUI.this.scanning = true;
             final String[] items = (String[])evt.data;
-            Thread thrd = new Thread(new Runnable() {
-                public void run() {
-                    GUI.this.display.syncExec(new Runnable() {
-                        public void run() {
-                            scan(items);
-                        }
-                    });
-                }
+            Thread thrd = new Thread(()-> {
+                GUI.this.display.syncExec(() -> {
+                    scan(items);
+                });
             });
             thrd.start();
         }
+        @Override
         public void dragOver(DropTargetEvent evt) {
             if (GUI.this.scanning ||
                 GUI.this.draggingOut) {
@@ -1220,69 +1216,61 @@ public class GUI implements Runnable, NLS.Reg.Listener {
     ///////////////////////////////////////////////////////////////////////////
 
     void updateProgress(final String fpath) {
-        this.display.syncExec(new Runnable() {
-            public void run() {
-                GUI.this.info.setText(fpath);
-                GUI.this.scanned++;
-                double prct = (GUI.this.scanned * 100.0) /
-                               GUI.this.numOfFiles;
-                if (GUI.this.lastPercentage < prct) {
-                    GUI.this.shell.setText(String.format(
-                            "%s - %.1f%%", PRODUCT_TITLE,
-                            GUI.this.lastPercentage = prct));
-                }
+        this.display.syncExec(() -> {
+            GUI.this.info.setText(fpath);
+            GUI.this.scanned++;
+            double prct = (GUI.this.scanned * 100.0) /
+                            GUI.this.numOfFiles;
+            if (GUI.this.lastPercentage < prct) {
+                GUI.this.shell.setText(String.format(
+                        "%s - %.1f%%", PRODUCT_TITLE,
+                        GUI.this.lastPercentage = prct));
             }
         });
     }
 
     void updateResult(final String fpath, final ImageScanner.Result res,
                       final boolean aborted) {
-        this.display.syncExec(new Runnable() {
-            public void run() {
-                switch(res.type()) {
-                    case OK: {
-                        break;
+        this.display.syncExec(() -> {
+            switch(res.type()) {
+                case OK: {
+                    break;
+                }
+                case WARNING:
+                case ERROR: {
+                    res.tag = fpath;
+                    GUI.this.damaged++;
+                    if (addResult(res)) {
+                        GUI.this.badLst.setItemCount(GUI.this.results.size());
                     }
-                    case WARNING:
-                    case ERROR: {
-                        res.tag = fpath;
-                        GUI.this.damaged++;
-                        if (addResult(res)) {
-                            GUI.this.badLst.setItemCount(GUI.this.results.size());
-                        }
-                        break;
-                    }
-                    case UNEXPECTED_ERROR: {
-                        GUI.this.unreadable += aborted ? 0 : 1;
-                        break;
-                    }
-                    default: {
-                        throw new Error();
-                    }
+                    break;
+                }
+                case UNEXPECTED_ERROR: {
+                    GUI.this.unreadable += aborted ? 0 : 1;
+                    break;
+                }
+                default: {
+                    throw new Error();
                 }
             }
         });
     }
 
     void updateError(final Throwable err) {
-        this.display.syncExec(new Runnable() {
-            public void run() {
-                if (err instanceof IOException) {
-                    GUI.this.unreadable++;
-                }
-                else {
-                    Log.exception(Log.Level.FATAL, GUI.class.getName(), err);
-                }
+        this.display.syncExec(() -> {
+            if (err instanceof IOException) {
+                GUI.this.unreadable++;
+            }
+            else {
+                Log.exception(Log.Level.FATAL, GUI.class.getName(), err);
             }
         });
     }
 
     void updateFatal(final Throwable err) {
         Log.exception(Log.Level.FATAL, GUI.class.getName(), err);
-        this.display.syncExec(new Runnable() {
-            public void run() {
-                handleFatalError(err);
-            }
+        this.display.syncExec(() -> {
+            handleFatalError(err);
         });
     }
 
@@ -1329,10 +1317,8 @@ public class GUI implements Runnable, NLS.Reg.Listener {
                     try { ins.close(); } catch (Exception ignored) { }
                 }
             }
-            GUI.this.display.syncExec(new Runnable() {
-                public void run() {
-                    GUI.this.activeScanRuns--;
-                }
+            GUI.this.display.syncExec(() -> {
+                GUI.this.activeScanRuns--;
             });
         }
     }
