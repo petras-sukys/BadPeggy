@@ -20,12 +20,12 @@
     <dependency>
       <groupId>com.coderslagoon</groupId>
       <artifactId>baselib</artifactId>
-      <version>1.0.1</version>
+      <version>1.0.2</version>
     </dependency>
     <dependency>
       <groupId>com.coderslagoon</groupId>
       <artifactId>baselib-swt</artifactId>
-      <version>1.0.1</version>
+      <version>1.0.2</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.platform</groupId>
