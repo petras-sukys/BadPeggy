@@ -6,7 +6,8 @@
             "type": "java",
             "name": "Launch GUI",
             "request": "launch",
-            "mainClass": "com.coderslagoon.badpeggy.GUI"
+            "mainClass": "com.coderslagoon.badpeggy.GUI",
+            // "vmArgs": "-XstartOnFirstThread"
         },
 		{
             "type": "java",
