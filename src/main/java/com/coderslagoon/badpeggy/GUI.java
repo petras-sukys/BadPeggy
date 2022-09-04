@@ -92,13 +92,13 @@ import com.coderslagoon.baselib.util.Prp;
 import com.coderslagoon.baselib.util.VarRef;
 
 public class GUI implements Runnable, NLS.Reg.Listener {
-    final static String PROPERTIES = "badpeggy";
+    static final String PROPERTIES = "badpeggy";
 
-    final static String VERSION = "2.4.0";
+    static final String VERSION = "2.4.0";
 
-    final static int DLG_GAP = 10;
+    static final int DLG_GAP = 10;
 
-    final static int IO_BUF_SZ = 0x10000;
+    static final int IO_BUF_SZ = 0x10000;
 
     static Log _log = new Log("GUI");
 
@@ -163,11 +163,11 @@ public class GUI implements Runnable, NLS.Reg.Listener {
         _propertiesFile = MiscUtils.determinePropFile(GUI.class, PROPERTIES, true);
     }
 
-    final static String PRODUCT_TITLE = "Bad Peggy";
-    final static String PRODUCT_NAME = PRODUCT_TITLE.toLowerCase().replace(" ", "");
-    public final static String PRODUCT_SITE = "https://coderslagoon.com";
+    static final String PRODUCT_TITLE = "Bad Peggy";
+    static final String PRODUCT_NAME = PRODUCT_TITLE.toLowerCase().replace(" ", "");
+    public static final String PRODUCT_SITE = "https://coderslagoon.com";
 
-    final static int EXITCODE_UNRECERR = 1;
+    static final int EXITCODE_UNRECERR = 1;
 
     private void initLang() throws BaseLibException {
         NLS.Reg.instance().load(DEFAULT_LANG_ID);
@@ -327,7 +327,7 @@ public class GUI implements Runnable, NLS.Reg.Listener {
                 GridData.VERTICAL_ALIGN_FILL   | GridData.GRAB_VERTICAL));
 
         this.drop = new DropTarget(this.shell, DND.DROP_MOVE | DND.DROP_DEFAULT);
-        this.drop.setTransfer(new Transfer[] { FileTransfer.getInstance() });
+        this.drop.setTransfer(FileTransfer.getInstance());
         this.drop.addDropListener(this.onDrop);
 
         this.shell.layout(true, true);
@@ -432,9 +432,7 @@ public class GUI implements Runnable, NLS.Reg.Listener {
     }
 
     void writeConfigurationFile() {
-        FileOutputStream faos = null;
-        try {
-            faos = new FileOutputStream(_propertiesFile);
+        try (FileOutputStream faos = new FileOutputStream(_propertiesFile)) {
             Prp.global().store(faos, "");
         }
         catch (IOException ioe) {
@@ -442,9 +440,6 @@ public class GUI implements Runnable, NLS.Reg.Listener {
                 SWT.ICON_WARNING | SWT.OK,
                 NLS.GUI_MSG_CFGSAVEERR_2.fmt(_propertiesFile.getAbsolutePath(), ioe.getMessage()),
                 NLS.GUI_DLG_GENERIC_WARNING.s());
-        }
-        finally {
-            if (null != faos) try { faos.close(); } catch (Exception ignored) { }
         }
     }
 
@@ -502,8 +497,7 @@ public class GUI implements Runnable, NLS.Reg.Listener {
             if (null == path) {
                 return;
             }
-            try {
-                FileOutputStream fos = new FileOutputStream(path, false);
+            try (FileOutputStream fos = new FileOutputStream(path, false)) {
                 PrintStream ps = new PrintStream(fos, true);
                 Log.addPrinter(ps);
                 GUIProps.SET_LASTLOGGING.set(Prp.global(), path);
@@ -638,8 +632,8 @@ public class GUI implements Runnable, NLS.Reg.Listener {
         }
     };
 
-    final static String DEFAULT_LANG_ID = "de";
-    final static String[][] LANGS = new String[][] {
+    static final String DEFAULT_LANG_ID = "de";
+    static final String[][] LANGS = new String[][] {
         { DEFAULT_LANG_ID, "Deutsch" },
         { "en"           , "English" }
     };
@@ -693,13 +687,13 @@ public class GUI implements Runnable, NLS.Reg.Listener {
 
     static String normalizeMessage(String  msg) {
         return msg.replaceAll("\\ 0x[a-fA-F0-9]+" , "")
-                  .replaceAll("\\ [0-9]+\\.[0-9]+", "")
-                  .replaceAll("\\ [0-9]+"         , "");
+                  .replaceAll("\\ \\d+\\.\\d+", "")
+                  .replaceAll("\\ \\d+"         , "");
     }
 
     void differentiate(TableItem ti, String msg) {
         String msg2 = normalizeMessage(msg);
-        int v = msg2.toString().hashCode();
+        int v = msg2.hashCode();
         int r =  v & 0x00000ff;
         int g = (v & 0x000ff00) >>  8;
         int b = (v & 0x0ff0000) >> 16;
@@ -767,7 +761,7 @@ public class GUI implements Runnable, NLS.Reg.Listener {
             for (int i : new int[] { 0, 1, 6 }) {
                 GUI.this.popupMenu.getItem(i).setEnabled(enable);
             }
-            enable = 0 < GUI.this.results.size();
+            enable = !GUI.this.results.isEmpty();
             for (int i : new int[] { 3, 4 }) {
                 GUI.this.popupMenu.getItem(i).setEnabled(enable);
             }
@@ -922,12 +916,9 @@ public class GUI implements Runnable, NLS.Reg.Listener {
                 return;
             }
             GUIProps.SET_LASTEXPORTFILE.set(Prp.global(), fname);
-            PrintStream ps = null;
-            try {
-                ps = new PrintStream(
-                     new BufferedOutputStream(
-                     new FileOutputStream(fname)));
-
+            try (PrintStream ps = new PrintStream(
+                new BufferedOutputStream(
+                new FileOutputStream(fname)))) {
                 int[] idxs = GUI.this.badLst.getSelectionIndices();
                 for (int idx : idxs) {
                     fname = GUI.this.results.get(idx).tag.toString();
@@ -940,19 +931,13 @@ public class GUI implements Runnable, NLS.Reg.Listener {
                     NLS.GUI_DLG_EXPLST_ERROR_1.fmt(ioe.getLocalizedMessage()),
                     NLS.GUI_DLG_GENERIC_WARNING.s());
             }
-            finally {
-                if (null != ps) {
-                    ps.flush();
-                    ps.close();
-                }
-            }
         }
     };
 
     MouseListener onImageClick = new MouseListener() {
         public void mouseDoubleClick(MouseEvent me) {
-            boolean active = GUIProps.OPTS_IMGVIEWACTIVE.get();
-            GUI.this.imgViewer.setActive(active = !active);
+            boolean active = !GUIProps.OPTS_IMGVIEWACTIVE.get();
+            GUI.this.imgViewer.setActive(active);
             GUIProps.OPTS_IMGVIEWACTIVE.set(Prp.global(), active);
         }
         public void mouseDown(MouseEvent ignored) { }
@@ -987,9 +972,7 @@ public class GUI implements Runnable, NLS.Reg.Listener {
             GUI.this.scanning = true;
             final String[] items = (String[])evt.data;
             Thread thrd = new Thread(()-> {
-                GUI.this.display.syncExec(() -> {
-                    scan(items);
-                });
+                GUI.this.display.syncExec(() -> scan(items));
             });
             thrd.start();
         }
@@ -1111,11 +1094,11 @@ public class GUI implements Runnable, NLS.Reg.Listener {
             this.scanning = false;
             if (this.close.get()) {
                 this.shell.close();
-                return;
+            } else {
+                this.shell.setText(PRODUCT_TITLE);
+                this.lastPercentage = 0.0;
+                enableControls(true);
             }
-            this.shell.setText(PRODUCT_TITLE);
-            this.lastPercentage = 0.0;
-            enableControls(true);
         }
     }
 
@@ -1269,9 +1252,7 @@ public class GUI implements Runnable, NLS.Reg.Listener {
 
     void updateFatal(final Throwable err) {
         Log.exception(Log.Level.FATAL, GUI.class.getName(), err);
-        this.display.syncExec(() -> {
-            handleFatalError(err);
-        });
+        this.display.syncExec(() -> handleFatalError(err));
     }
 
     class ScanRun implements Runnable {
@@ -1317,9 +1298,7 @@ public class GUI implements Runnable, NLS.Reg.Listener {
                     try { ins.close(); } catch (Exception ignored) { }
                 }
             }
-            GUI.this.display.syncExec(() -> {
-                GUI.this.activeScanRuns--;
-            });
+            GUI.this.display.syncExec(() -> GUI.this.activeScanRuns--);
         }
     }
 

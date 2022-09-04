@@ -1,7 +1,9 @@
 package com.coderslagoon.badpeggy;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -219,9 +221,9 @@ public class ImageScannerTest implements ImageScanner.Callback {
     // FIXME: be tolerant until we find out why things tend to shake ...
     //        (theory: either internal random number generators or some
     //                 time stamp rendering we cannot control)
-    final static int MAX_MISMATCHES = 0;
+    static final int MAX_MISMATCHES = 0;
 
-    final static double[] qualityLevels(String fmt) {
+    static final double[] qualityLevels(String fmt) {
         fmt = fmt.toLowerCase();
         if (fmt.equals("jpeg")) {
             return new double[] { 0.05, 0.2, 0.5, 0.85, 0.95, 1.0 };
@@ -396,7 +398,7 @@ public class ImageScannerTest implements ImageScanner.Callback {
                 }
             }, ifmt, this);
             ImageScanner.Result result = jscan.lastResult();
-            assertTrue(lastResult != result);
+            assertEquals(lastResult, result);
             lastResult = result;
 
             System.out.println(String.format(
@@ -427,7 +429,7 @@ public class ImageScannerTest implements ImageScanner.Callback {
                     boolean nodetect = 0 == EXCLUSIONS[tabidx];
                     mismatchesNoDetects += (damage == Damage.NONE) ^ nodetect ? 0 : 1;
                     assertFalse(result.messages().iterator().hasNext());
-                    assertTrue(ImageScanner.Result.Type.OK == result.type());
+                    assertEquals(ImageScanner.Result.Type.OK, result.type());
                 }
             }
             else {
@@ -435,8 +437,8 @@ public class ImageScannerTest implements ImageScanner.Callback {
                     pwnd.print("1");
                 }
                 if (DO_VERIFY) {
-                    assertTrue(damage != Damage.NONE);
-                    assertTrue(ImageScanner.Result.Type.OK != result.type());
+                    assertNotSame(Damage.NONE, damage);
+                    assertNotSame(ImageScanner.Result.Type.OK, result.type());
                     assertTrue(result.messages().iterator().hasNext());
                     assertTrue(result.collapsedMessages().iterator().hasNext());
                     int ccm = 0;
@@ -457,7 +459,7 @@ public class ImageScannerTest implements ImageScanner.Callback {
                                 found++;
                             }
                         }
-                        assertTrue(1 == found);
+                        assertEquals(1, found);
                     }
                     assertTrue(cm >= ccm);
                 }
@@ -474,8 +476,8 @@ public class ImageScannerTest implements ImageScanner.Callback {
             }
         }
         if (DO_VERIFY) {
-            assertTrue(-1 == EXCLUSIONS [tabidx]);
-            assertTrue(-1 == RESULTCODES[tabidx]);
+            assertEquals(-1, EXCLUSIONS [tabidx]);
+            assertEquals(-1, RESULTCODES[tabidx]);
         }
         if (null != pwnd) {
             pwnd.println("-1");

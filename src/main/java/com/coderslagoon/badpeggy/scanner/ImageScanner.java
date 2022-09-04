@@ -31,12 +31,9 @@ public class ImageScanner implements IIOReadWarningListener, IIOReadProgressList
     public void thumbnailProgress(ImageReader a, float b) { }
 
     public void imageProgress(ImageReader source, float percentage) {
-        if (null != this.callback) {
-            if (!this.callback.onProgress(
-                    (percentage + (this.imageIndex * 100.0)) /
-                                   this.imageCount)) {
-                throw new StopException();
-            }
+        if (null != this.callback && !this.callback.onProgress(
+                (percentage + (this.imageIndex * 100.0)) / this.imageCount)) {
+            throw new StopException();
         }
     }
 
@@ -49,7 +46,7 @@ public class ImageScanner implements IIOReadWarningListener, IIOReadProgressList
     Result   lastResult;
     Callback callback;
 
-    final static String LOG_CTX = "imgscan";
+    static final String LOG_CTX = "imgscan";
     static int nextLogId = 0;
     public Log log = new Log(LOG_CTX + "-" + nextLogId++);
 
@@ -120,7 +117,7 @@ public class ImageScanner implements IIOReadWarningListener, IIOReadProgressList
         this.lastResult = new Result();
         this.callback = callback;
         List<ImageReader> ireaders = newReaders(ifmt);
-        if (0 == ireaders.size()) {
+        if (ireaders.isEmpty()) {
             return null;
         }
         for (ImageReader ireader : ireaders) {
@@ -207,7 +204,7 @@ public class ImageScanner implements IIOReadWarningListener, IIOReadProgressList
         return Result.Type.OK == this.lastResult.type();
     }
 
-    public final static byte[] SELFTEST_DATA =
+    protected static final byte[] SELFTEST_DATA =
         BinUtils.base64Decode("/9j/4AAQSkZJRgABAgAAAQABAAD/2wBDAKBueIx4ZKCMgoy0qqC+8P//8Nzc8P//////////////////////////////////////////////////////////2wBDAaq0tPDS8P//////////////////////////////////////////////////////////////////////////////wAARCAAQABADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwBOppfp0/z/AJ8AAAAAAAAAAAAA");
 
     public static boolean selfTest() {
