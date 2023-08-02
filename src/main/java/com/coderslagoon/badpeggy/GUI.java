@@ -467,8 +467,14 @@ public class GUI implements Runnable, NLS.Reg.Listener {
                 rootLog.removeHandler(h);
             }
             Log.level(Log.Level.DEBUG);
-            GUI gui = new GUI();
-            gui.run();
+            if (args.length > 0) {
+                CLI cli = new CLI();
+                cli.run(args[0]);
+                }
+            else {
+                GUI gui = new GUI();
+                gui.run();
+            }
         }
         catch (Throwable err) {
             MiscUtils.dumpUncaughtError(err, PROPERTIES);
